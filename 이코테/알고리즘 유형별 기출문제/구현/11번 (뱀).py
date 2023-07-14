@@ -12,40 +12,6 @@ for i in range(L):
     X, C = input().split(" ")
     turnDict[int(X)] = C
 
-# 6
-# 3
-# 3 4
-# 2 5
-# 5 3
-# 3
-# 3 D
-# 15 L
-# 17 D
-
-# 10
-# 4
-# 1 2
-# 1 3
-# 1 4
-# 1 5
-# 4
-# 8 D
-# 10 D
-# 11 D
-# 13 L
-
-# 10
-# 5
-# 1 5
-# 1 3
-# 1 2
-# 1 6
-# 1 7
-# 4
-# 8 D
-# 10 D
-# 11 D
-# 13 L
 def move(direction, board, hx, hy, snakeList):
     lengthLimit = N
     if direction == "E":
@@ -141,6 +107,7 @@ def turn(d):
         else:
             direction = "E"
         return
+
 
 ## main
 for time in range(0, 10001):
