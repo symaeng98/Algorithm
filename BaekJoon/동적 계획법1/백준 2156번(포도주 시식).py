@@ -1,36 +1,33 @@
-##함수 선언 부분##
-import sys
-##변수 선언 부분##
-grape = []
-grape_max = []
-case1 = 0
-case2 = 0
-case3 = 0
-##메인 함수 부분##
-if __name__ == "__main__":
-    N = int(input())
-    for i in range(N):
-        grape.append(int(input()))
+def solution(arr, n):
+    max_arr = []
+    if n == 1:
+        print(arr[0])
+        return
+    max_arr.append(arr[0])
+    if n == 2:
+        print(arr[0] + arr[1])
+        return
+    max_arr.append(arr[0]+arr[1])
+    if n == 3:
+        print(max(arr[0]+arr[1], arr[0]+arr[2], arr[1]+arr[2]))
+        return
+    max_arr.append(max(arr[0]+arr[1], arr[0]+arr[2], arr[1]+arr[2]))
+    if n == 4:
+        print(max((arr[0]+arr[1]+arr[3]),(arr[0]+arr[2]+arr[3]),(arr[1]+arr[2])))
+        return
+    max_arr.append(max((arr[0]+arr[1]+arr[3]),(arr[0]+arr[2]+arr[3]),(arr[1]+arr[2])))
+    for i in range(4, n):
+        case1 = max_arr[i-3] + arr[i-1] + arr[i]
+        case2 = max_arr[i-2] + arr[i]
+        case3 = max_arr[i-4] + arr[i-2] + arr[i-1]
+        max_arr.append(max(case1,case2,case3))
+    print(max_arr.pop())
 
-    grape_max.append(grape[0])
-    if N == 1:
-        print(grape_max.pop())
-        sys.exit(0)
-    grape_max.append(grape[1] + grape[0])
-    if N == 2:
-        print(grape_max.pop())
-        sys.exit(0)
-    grape_max.append(max((grape[0]+grape[1]),(grape[0]+grape[2]),(grape[1]+grape[2])))
-    if N == 3:
-        print(grape_max.pop())
-        sys.exit(0)
-    grape_max.append(max((grape[0]+grape[1]+grape[3]),(grape[0]+grape[2]+grape[3]),(grape[1]+grape[2])))
-    if N == 4:
-        print(grape_max.pop())
-        sys.exit(0)
-    for i in range(4,N):
-        case1 = grape_max[i-3] + grape[i-1] + grape[i]
-        case2 = grape_max[i-2] + grape[i]
-        case3 = grape_max[i-4] + grape[i-2] + grape[i-1]
-        grape_max.append(max(case1,case2,case3))
-    print(grape_max.pop())
+
+n = int(input())
+arr = []
+
+for _ in range(n):
+    arr.append(int(input()))
+
+solution(arr, n)
