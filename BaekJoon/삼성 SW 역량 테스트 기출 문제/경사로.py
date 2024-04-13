@@ -37,8 +37,10 @@ def solution(arr):
 
     return True
 
+
 for b in board:
     if solution(b):
         result += 1
+
 
 print(result)
