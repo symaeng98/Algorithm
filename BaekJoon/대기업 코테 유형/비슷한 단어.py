@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 n = int(input())
 word = input()
 word_list = list(word)
