@@ -6,87 +6,81 @@ dx = [0, 0, -1, 1]
 dy = [1, -1, 0, 0]
 def solution(board, r, c):
     answer = 0
-    pair = [[] for _ in range(7)]
+    all_card = []
     total_card_num = 0
-    for k in range(1, 7):
-        for i in range(4):
-            for j in range(4):
-                if board[i][j] == k:
-                    total_card_num = max(total_card_num, k)
-                    pair[k].append((i, j))
-    print(total_card_num)
+    pair = [[] for _ in range(7)]
+    for i in range(4):
+        for j in range(4):
+            if board[i][j] != 0:
+                total_card_num = max(total_card_num, board[i][j])
+                all_card.append((i, j))
+                pair[board[i][j]].append((i, j))
 
-    def xy_to_txy(board, x, y, tx, ty):
-        distance = [[0]*4 for _ in range(4)]
-        distance[x][y] = 0
-        for i in range(4):
-            for j in range(4):
-                distance[i][j] = abs(i-x) + abs(j-y)
+    def xy_to_txy(graph, x, y, tx, ty):
+        if (x, y) == (tx, ty):
+            return 0
+        q = deque([(0, x, y)])
+        visited = {(x, y)}
 
-        q = deque()
-        q.append((0, x, y))
-        visited = [(x, y)]
         while q:
             cost, x, y = q.popleft()
             for i in range(4):
                 nx = x + dx[i]
                 ny = y + dy[i]
-                mx = x + dx[i]
-                my = y + dy[i]
-                if 0 <= mx < 4 and 0 <= my < 4:
-                    if (mx, my) not in visited:
-                        visited.append((mx, my))
-                        distance[mx][my] = cost + 1
-                        q.append((cost+1, mx, my))
+
+                mx = x
+                my = y
                 while True:
-                    if 0 <= nx < 4 and 0 <= ny < 4:
-                        if board[nx][ny] != 0:
-                            break
-                        nx += dx[i]
-                        ny += dy[i]
-                    nx -= dx[i]
-                    ny -= dy[i]
-                    break
-                # if nx == x and ny == y:
-                #     continue
-                if (nx, ny) not in visited:
-                    visited.append((nx, ny))
-                    distance[nx][ny] = cost + 1
+                    mx += dx[i]
+                    my += dy[i]
+                    if not (0 <= mx <= 3 and 0 <= my <= 3):
+                        mx -= dx[i]
+                        my -= dy[i]
+                        break
+                    elif graph[mx][my] != 0:
+                        break
+
+                if (nx, ny) == (tx, ty) or (mx, my) == (tx, ty):
+                    return cost + 1
+
+                if (0 <= nx <= 3 and 0 <= ny <= 3) and (nx, ny) not in visited:
                     q.append((cost+1, nx, ny))
-        # print(distance)
-        return distance[tx][ty]
+                    visited.add((nx, ny))
 
-    print(pair)
+                if (mx, my) not in visited:
+                    q.append((cost+1, mx, my))
+                    visited.add((mx, my))
+
+    result = []
+    def rec(order, index, now):
+        if index == total_card_num:
+            per = now
+            tmp = copy.deepcopy(board)
+            cost = 0
+            now_r, now_c = r, c
+            for i in range(len(per)//2):
+                cost += xy_to_txy(tmp, now_r, now_c, per[i*2][0], per[i*2][1])
+                now_r, now_c = per[i*2][0], per[i*2][1]
+                cost += 1
+                cost += xy_to_txy(tmp, now_r, now_c, per[i*2+1][0], per[i*2+1][1])
+                now_r, now_c = per[i*2+1][0], per[i*2+1][1]
+                cost += 1
+
+                tmp[per[i*2+1][0]][per[i*2+1][1]] = 0
+                tmp[per[i*2][0]][per[i*2][1]] = 0
+            result.append(cost)
+            return
+        for i in range(total_card_num):
+            if i == index:
+                for a, b in [(0, 1), (1, 0)]:
+                    now.append(pair[order[i]][a])
+                    now.append(pair[order[i]][b])
+                    rec(order, index+1, now)
+                    now.pop()
+                    now.pop()
+
+
     for per in permutations([i for i in range(1, total_card_num+1)]):
-        result = []
-        tmp = copy.deepcopy(board)
-        cost = 0
-        for now in per:
-            p1 = xy_to_txy(tmp, r, c, pair[now][0][0], pair[now][0][1])
-            p2 = xy_to_txy(tmp, r, c, pair[now][1][0], pair[now][1][1])
-            print(p1, p2)
-            if p1 < p2:
-                cost += p1
-                r, c = pair[now][0][0], pair[now][0][1]
+        rec(list(per), 0, [])
 
-                cost += 1
-                cost += xy_to_txy(tmp, r, c, pair[now][1][0], pair[now][1][1])
-                r, c = pair[now][1][0], pair[now][1][1]
-                cost += 1
-                tmp[pair[now][0][0]][pair[now][0][1]] = 0
-                tmp[pair[now][1][0]][pair[now][1][1]] = 0
-            else:
-                cost += p2
-                r, c = pair[now][1][0], pair[now][1][1]
-
-                cost += 1
-                cost += xy_to_txy(tmp, r, c, pair[now][0][0], pair[now][0][1])
-                r, c = pair[now][0][0], pair[now][0][1]
-                cost += 1
-                tmp[pair[now][0][0]][pair[now][0][1]] = 0
-                tmp[pair[now][1][0]][pair[now][1][1]] = 0
-
-        result.append(cost)
-
-    print(result)
-    return result
+    return min(result)
