@@ -27,4 +27,7 @@ for i, s in enumerate(t):
         tmp.pop()
         now //= 3
 
-print(result)
+if tmp:
+    print(0)
+else:
+    print(result)
