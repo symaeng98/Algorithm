@@ -50,6 +50,9 @@
 """전위 순회 만으로 후위 순회를 얻어내는 풀이
 """
 
+import sys
+sys.setrecursionlimit(10**5)
+
 nodes = []
 while True:
     try:
